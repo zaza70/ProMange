@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProjectPro - نظام تتبع المشاريع</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <header>
+        <h1>ProjectPro</h1>
+        <div class="theme-toggle">
+            <span>🌙</span>
+            <label class="switch">
+                <input type="checkbox" id="theme-switch">
+                <span class="slider round"></span>
+            </label>
+            <span>☀️</span>
+        </div>
+    </header>
+    
+    <main>
+        <section class="search-bar">
+            <input type="text" id="project-search" placeholder="البحث عن مشروع...">
+            <button id="clear-search">مسح</button>
+        </section>
+        
+        <section class="project-form">
+            <h2>إضافة مشروع جديد</h2>
+            <form id="project-form">
+                <div class="form-group">
+                    <label for="project-name">اسم المشروع:</label>
+                    <input type="text" id="project-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="project-desc">وصف المشروع:</label>
+                    <textarea id="project-desc"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="project-status">حالة المشروع:</label>
+                    <select id="project-status" required>
+                        <option value="not-started">لم يبدأ بعد</option>
+                        <option value="in-progress">في طور الإنجاز</option>
+                        <option value="completed">تم الإنجاز</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="project-deadline">الموعد النهائي:</label>
+                    <input type="date" id="project-deadline">
+                </div>
+                <div class="form-group">
+                    <label for="project-priority">الأولوية:</label>
+                    <select id="project-priority">
+                        <option value="low">منخفضة</option>
+                        <option value="medium" selected>متوسطة</option>
+                        <option value="high">عالية</option>
+                    </select>
+                </div>
+                <button type="submit">إضافة المشروع</button>
+            </form>
+        </section>
+
+        <section class="projects-container">
+            <div class="status-column">
+                <h2>لم يبدأ بعد</h2>
+                <div id="not-started-projects" class="projects-list"></div>
+            </div>
+            <div class="status-column">
+                <h2>في طور الإنجاز</h2>
+                <div id="in-progress-projects" class="projects-list"></div>
+            </div>
+            <div class="status-column">
+                <h2>تم الإنجاز</h2>
+                <div id="completed-projects" class="projects-list"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 ProjectPro</p>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
