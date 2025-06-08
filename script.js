@@ -14,23 +14,16 @@ const searchInput = document.getElementById('project-search');
 const clearSearchButton = document.getElementById('clear-search');
 const themeSwitch = document.getElementById('theme-switch');
 
-// Get current user
-const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-const username = currentUser ? currentUser.username : null;
-
-// Project data array - user specific
+// Project data array - no longer user specific
 let projects = [];
+
+// Default username for all projects (since we're removing login)
+const username = 'user';
 
 // Initialize the app
 function init() {
-    // Check authentication
-    if (!username) {
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    // Load user's projects
-    loadUserProjects();
+    // Load projects
+    loadProjects();
     
     // Set up event listeners
     projectForm.addEventListener('submit', addProject);
@@ -39,26 +32,32 @@ function init() {
     
     // Set up theme toggle
     setupThemeToggle();
+    
+    // Add welcome message
+    addWelcomeMessage();
 }
 
-// Get user-specific storage key
-function getUserProjectsKey() {
-    return `projects_${username}`;
-}
-
-// Save projects to localStorage (user specific)
+// Save projects to localStorage (no longer user specific)
 function saveProjects() {
-    localStorage.setItem(getUserProjectsKey(), JSON.stringify(projects));
+    localStorage.setItem('projects_all', JSON.stringify(projects));
 }
 
-// Load user's projects from localStorage
+// This function is now unused but we'll keep a simplified version for compatibility
 function loadUserProjects() {
-    projects = JSON.parse(localStorage.getItem(getUserProjectsKey())) || [];
     loadProjects();
 }
 
 // Load and display projects
 function loadProjects() {
+    // Get projects from localStorage
+    projects = JSON.parse(localStorage.getItem('projects_all')) || [];
+    
+    // Render projects
+    renderProjects();
+}
+
+// Render projects to the UI
+function renderProjects() {
     // Clear containers
     notStartedContainer.innerHTML = '';
     inProgressContainer.innerHTML = '';
@@ -177,8 +176,7 @@ function addProject(e) {
         status: projectStatusInput.value,
         deadline: projectDeadlineInput.value,
         priority: projectPriorityInput.value,
-        createdAt: new Date().toISOString(),
-        username: username // Associate with current user
+        createdAt: new Date().toISOString()
     };
     
     // Add to projects array
@@ -223,7 +221,7 @@ function showNotification(message) {
 function changeProjectStatus(index, newStatus) {
     projects[index].status = newStatus;
     saveProjects();
-    loadProjects();
+    renderProjects();
 }
 
 // Delete a project
@@ -231,7 +229,7 @@ function deleteProject(index) {
     if (confirm('هل أنت متأكد من حذف هذا المشروع؟')) {
         projects.splice(index, 1);
         saveProjects();
-        loadProjects();
+        renderProjects();
     }
 }
 
@@ -240,7 +238,7 @@ function filterProjects() {
     const searchTerm = searchInput.value.trim().toLowerCase();
     
     if (!searchTerm) {
-        loadProjects(); // Reset to show all projects
+        renderProjects(); // Reset to show all projects
         return;
     }
     
@@ -262,7 +260,7 @@ function renderFilteredProjects(filteredProjects) {
     completedContainer.innerHTML = '';
     
     // Display filtered projects
-    filteredProjects.forEach((project, index) => {
+    filteredProjects.forEach(project => {
         const projectIndex = projects.findIndex(p => p.name === project.name && p.createdAt === project.createdAt);
         const projectCard = createProjectCard(project, projectIndex);
         
@@ -283,13 +281,13 @@ function renderFilteredProjects(filteredProjects) {
 // Clear search
 function clearSearch() {
     searchInput.value = '';
-    loadProjects();
+    renderProjects();
 }
 
 // Setup theme toggle
 function setupThemeToggle() {
     // Check if user has a saved preference
-    const savedTheme = localStorage.getItem(`theme_${username}`);
+    const savedTheme = localStorage.getItem(`theme_app`);
     
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-theme');
@@ -300,10 +298,24 @@ function setupThemeToggle() {
     themeSwitch.addEventListener('change', function() {
         document.body.classList.toggle('dark-theme');
         
-        // Save user preference
+        // Save preference
         const isDarkMode = document.body.classList.contains('dark-theme');
-        localStorage.setItem(`theme_${username}`, isDarkMode ? 'dark' : 'light');
+        localStorage.setItem(`theme_app`, isDarkMode ? 'dark' : 'light');
     });
+}
+
+// Add welcome message instead of logout button
+function addWelcomeMessage() {
+    const header = document.querySelector('header');
+    
+    // Create welcome section
+    const userSection = document.createElement('div');
+    userSection.className = 'user-section';
+    userSection.innerHTML = `
+        <span class="username">مرحباً بك في تطبيق إدارة المشاريع</span>
+    `;
+    
+    header.appendChild(userSection);
 }
 
 // Start the app when DOM is loaded
